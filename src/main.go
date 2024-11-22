@@ -33,7 +33,7 @@ func main() {
 		PrintPath(value, log.Default())
 	}
 
-	dirs := gitfinder.FindGitFolders(folders, 0)
+	dirs := gitfinder.FindGitRepos(folders, 0)
 	for _, dir := range dirs {
 		fmt.Println(dir)
 	}

@@ -7,7 +7,7 @@ import (
 	"EgoLottery/testutils"
 )
 
-func TestFindGitFolders0Depth(t *testing.T) {
+func TestFindGitRepos0Depth(t *testing.T) {
 	name, err := testutils.CreateTestFolder()
 	if err != nil {
 		t.Fatalf("Error while creating test folder: %v\n", err)
@@ -15,7 +15,7 @@ func TestFindGitFolders0Depth(t *testing.T) {
 	defer os.RemoveAll(name) // Clean up
 	absName, err := filepath.Abs(name)
 	
-	dirs := FindGitFolders([]string{absName}, 0)
+	dirs := FindGitRepos([]string{absName}, 0)
 	if err != nil {
 		t.Fatalf("Error while finding absolute path to test folder: %v\n", err)
 	}

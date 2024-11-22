@@ -11,7 +11,7 @@ import (
 // Will look into a sub-directories until reaching a level of depth.
 //
 // A negative depth value will be seen as a value of 0.
-func FindGitFolders(dirs []string, depth int) []string {
+func FindGitRepos(dirs []string, depth int) []string {
 	gitDirs := []string{}
 	var absPath string
 	for _, dir := range dirs {
