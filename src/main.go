@@ -1,7 +1,9 @@
 package main
 
 import (
+	"EgoLottery/gitfinder"
 	"flag"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -29,6 +31,11 @@ func main() {
 	folders := strings.Split(string(data), "\n")
 	for _, value := range folders {
 		PrintPath(value, log.Default())
+	}
+
+	dirs := gitfinder.FindGitFolders(folders, 0)
+	for _, dir := range dirs {
+		fmt.Println(dir)
 	}
 }
 
