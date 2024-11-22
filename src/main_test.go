@@ -1,6 +1,7 @@
 package main
 
 import (
+	"EgoLottery/testutils"
 	"bytes"
 	"fmt"
 	"io"
@@ -10,36 +11,8 @@ import (
 	"testing"
 )
 
-func createTestFolder() (string, error) {
-	name, err := os.MkdirTemp(".", "")
-	if err != nil {
-		return name, err
-	}
-	// Filling test folder with stuff so there is something to look at
-	file1, err := os.Create(filepath.Join(".", name, ".gitignore"))
-	if err != nil {
-		return name, err
-	}
-	file1.Close()
-	file2, err := os.Create(filepath.Join(".", name, "README.md"))
-	if err != nil {
-		return name, err
-	}
-	file2.Close()
-
-	err = os.Mkdir(filepath.Join(".", name, ".git"), 0644)
-	if err != nil {
-		return name, err
-	}
-	err = os.Mkdir(filepath.Join(".", name, "src"), 0644)
-	if err != nil {
-		return name, err
-	}
-	return name, nil
-}
-
 func TestPrintPath(t *testing.T) {
-	name, err := createTestFolder()
+	name, err := testutils.CreateTestFolder()
 	if err != nil {
 		t.Fatalf("Failed to create test folder: %v\n", err)
 	}
@@ -57,6 +30,6 @@ func TestPrintPath(t *testing.T) {
 
 	correctValue := fmt.Sprintf("%s:\n\t.git\n\t.gitignore\n\tREADME.md\n\tsrc\n", name)
 	if string(data) != correctValue {
-		t.Errorf("Incorrect data logged:\nCorrect:\n%s\nActual:\n%s\n", correctValue, string(data))
+		t.Errorf("Incorrect data logged:\nExpected:\n%s\nActual:\n%s\n", correctValue, string(data))
 	}
 }
