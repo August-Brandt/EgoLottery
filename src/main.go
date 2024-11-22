@@ -2,8 +2,8 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"io"
+	"log"
 	"os"
 	"strings"
 )
@@ -28,17 +28,17 @@ func main() {
 	}
 	folders := strings.Split(string(data), "\n")
 	for _, value := range folders {
-		PrintPath(value)
+		PrintPath(value, log.Default())
 	}
 }
 
-func PrintPath(path string) {
+func PrintPath(path string, output *log.Logger) {
 	entries, err := os.ReadDir(path)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("%s:\n", path)
+	output.Printf("%s:\n", path)
 	for _, entry := range entries {
-		fmt.Printf("\t%s\n", entry.Name())
+		output.Printf("\t%s\n", entry.Name())
 	}
 }
