@@ -8,7 +8,7 @@ import (
 
 // Takes a slice of directory paths (dirs) and looks for a .git folder.
 //
-// Will look into a sup-directories until reaching a level of depth.
+// Will look into a sub-directories until reaching a level of depth.
 //
 // A negative depth value will be seen as a value of 0.
 func FindGitFolders(dirs []string, depth int) []string {
