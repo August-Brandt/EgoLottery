@@ -1,7 +1,7 @@
 package main
 
 import (
-	"EgoLottery/testutils"
+	"github.com/August-Brandt/EgoLottery/testutils"
 	"bytes"
 	"fmt"
 	"io"

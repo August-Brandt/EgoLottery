@@ -1,7 +1,7 @@
 package gitfinder
 
 import (
-	"EgoLottery/testutils"
+	"github.com/August-Brandt/EgoLottery/testutils"
 	"fmt"
 	"os"
 	"path/filepath"

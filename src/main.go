@@ -1,7 +1,7 @@
 package main
 
 import (
-	"EgoLottery/gitfinder"
+	"github.com/August-Brandt/EgoLottery/gitfinder"
 	"flag"
 	"fmt"
 	"io"
