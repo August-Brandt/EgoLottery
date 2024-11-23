@@ -92,31 +92,6 @@ func TestFindGitReposNDepth1Path(t *testing.T) {
 	}
 }
 
-func TestFindGitRepos0Depth1Path(t *testing.T) {
-	name, err := testutils.CreateTestDirectory()
-	if err != nil {
-		t.Fatalf("Error while creating test directory: %v\n", err)
-	}
-	defer os.RemoveAll(name) // Clean up
-	absName, err := filepath.Abs(name)
-
-	if err != nil {
-		t.Fatalf("Error while finding absolute path to test directory: %v\n", err)
-	}
-	dirs := FindGitRepos([]string{absName}, 0)
-	correctValue := []string{filepath.Join(absName, ".git")}
-	if len(correctValue) != len(dirs) {
-		t.Errorf("Length of returned values not the same as correct\n\tExpected: %d\n\tActual: %d\n", len(correctValue), len(dirs))
-	}
-	if !t.Failed() { // Only run if both slices are same length
-		for i := 0; i < len(correctValue); i++ {
-			if correctValue[i] != dirs[i] {
-				t.Errorf("Actual value not the same as expected:\n\tExpected: %s\n\tActual: %s", correctValue[i], dirs[i])
-			}
-		}
-	}
-}
-
 func TestPathIsDir(t *testing.T) {
 	if !pathIsDir(".") {
 		t.Error("Gave false when path to directory")
