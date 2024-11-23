@@ -29,13 +29,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	folders := strings.Split(string(data), "\n")
-	for _, value := range folders {
-		PrintPath(value, log.Default())
-	}
+	directories := strings.Split(string(data), "\n")
 
 	fmt.Println(".git directories found:")
-	dirs := gitfinder.FindGitRepos(folders, *depth)
+	dirs := gitfinder.FindGitRepos(directories, *depth)
 	for _, dir := range dirs {
 		fmt.Println(dir)
 	}
