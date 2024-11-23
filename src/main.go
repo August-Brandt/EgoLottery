@@ -12,7 +12,8 @@ import (
 
 func main() {
 	var foldersFile string
-	flag.StringVar(&foldersFile, "file", "", "path to file containing folder to look for .git folders in")
+	flag.StringVar(&foldersFile, "file", "", "path to file containing directories to look for .git directory in")
+	depth := flag.Int("depth", 0, "The depth to recursively search for .git directories")
 	flag.Parse()
 	if foldersFile == "" { // Default file if non given
 		foldersFile = "~/.config/egolottery/folders"
@@ -33,7 +34,8 @@ func main() {
 		PrintPath(value, log.Default())
 	}
 
-	dirs := gitfinder.FindGitRepos(folders, 0)
+	fmt.Println(".git directories found:")
+	dirs := gitfinder.FindGitRepos(folders, *depth)
 	for _, dir := range dirs {
 		fmt.Println(dir)
 	}

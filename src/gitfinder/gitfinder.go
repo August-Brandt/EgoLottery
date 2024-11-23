@@ -15,6 +15,8 @@ func FindGitRepos(dirs []string, depth int) []string {
 	gitDirs := []string{}
 	var absPath string
 	for _, dir := range dirs {
+		// Reset subDirs to avoid looking at the same paths multiple times
+		subDirs := []string{} 
 		absPath = dir
 		if !pathIsDir(dir) {
 			log.Printf("'%s' is not a directory\n", dir)
@@ -28,7 +30,14 @@ func FindGitRepos(dirs []string, depth int) []string {
 		for _, entry := range entries {
 			if entry.Name() == ".git" {
 				gitDirs = append(gitDirs, filepath.Join(absPath, entry.Name()))
+				continue
 			}
+			if depth > 0 {
+				subDirs = append(subDirs, filepath.Join(absPath, entry.Name()))
+			}
+		}
+		if len(subDirs) > 0 {
+			gitDirs = append(gitDirs, FindGitRepos(subDirs, depth-1)...)
 		}
 	}
 	return gitDirs
