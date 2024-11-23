@@ -12,14 +12,13 @@ import (
 )
 
 func TestPrintPath(t *testing.T) {
-	name, err := testutils.CreateTestFolder()
+	name, err := testutils.CreateTestDirectory()
 	if err != nil {
 		t.Fatalf("Failed to create test folder: %v\n", err)
 	}
 	// Clean up
 	defer os.RemoveAll(filepath.Join(".", name))
 
-	
 	var logbuf bytes.Buffer
 	PrintPath(name, log.New(&logbuf, "", log.Lmsgprefix))
 
