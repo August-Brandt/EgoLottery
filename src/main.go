@@ -16,7 +16,7 @@ func main() {
 	depth := flag.Int("depth", 0, "The depth to recursively search for .git directories")
 	flag.Parse()
 	if foldersFile == "" { // Default file if non given
-		foldersFile = "~/.config/egolottery/folders"
+		foldersFile = "~/.config/egolottery/directories"
 	}
 
 	file, err := os.Open(foldersFile)
