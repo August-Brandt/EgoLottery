@@ -1,13 +1,15 @@
 package main
 
 import (
-	"github.com/August-Brandt/EgoLottery/gitfinder"
 	"flag"
 	"fmt"
 	"io"
 	"log"
 	"os"
 	"strings"
+
+	"github.com/August-Brandt/EgoLottery/gitfinder"
+	"github.com/August-Brandt/EgoLottery/gitstats"
 )
 
 func main() {
@@ -35,6 +37,11 @@ func main() {
 	dirs := gitfinder.FindGitRepos(directories, *depth)
 	for _, dir := range dirs {
 		fmt.Println(dir)
+	}
+
+	repos := gitstats.GetStats(dirs, "augustbrandt170@gmail.com")
+	for _, repo := range repos {
+		fmt.Printf("%s:\n\tPath: %s\n\tCommits: %d\n\n", repo.Name, repo.Path, repo.Commits)
 	}
 }
 
