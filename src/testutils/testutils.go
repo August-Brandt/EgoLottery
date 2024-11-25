@@ -2,6 +2,7 @@ package testutils
 
 import (
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 )
@@ -29,10 +30,15 @@ func CreateTestDirectoryFromPath(path string) (string, error) {
 	}
 	file2.Close()
 
-	err = os.Mkdir(filepath.Join(path, folderName, ".git"), 0644)
+	gitCmd := exec.Command("git", "init", name)
+	_, err = gitCmd.Output()
 	if err != nil {
 		return name, err
 	}
+	// err = os.Mkdir(filepath.Join(path, folderName, ".git"), 0644)
+	// if err != nil {
+	// 	return name, err
+	// }
 	err = os.Mkdir(filepath.Join(path, folderName, "src"), 0644)
 	if err != nil {
 		return name, err

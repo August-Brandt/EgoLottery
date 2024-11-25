@@ -20,10 +20,15 @@ func createTestDirectory(path string) error {
 	}
 	file1.Close()
 
-	err = os.Mkdir(filepath.Join(path, ".git"), 0644)
+	gitCmd := exec.Command("git", "init", path)
+	_, err = gitCmd.Output()
 	if err != nil {
 		return err
 	}
+	// err = os.Mkdir(filepath.Join(path, ".git"), 0644)
+	// if err != nil {
+	// 	return err
+	// }
 
 	return nil
 }
@@ -43,7 +48,7 @@ func TestEndToEnd(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error while creating directory: %v\n", err)
 	}
-	defer os.RemoveAll("./testDir")
+	// defer os.RemoveAll("./testDir")
 	absPath, err := filepath.Abs("./testDir")
 	if err != nil {
 		t.Fatalf("Error while getting absolute path: %v\n", err)
