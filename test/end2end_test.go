@@ -48,7 +48,7 @@ func TestEndToEnd(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error while creating directory: %v\n", err)
 	}
-	// defer os.RemoveAll("./testDir")
+	defer os.RemoveAll("./testDir")
 	absPath, err := filepath.Abs("./testDir")
 	if err != nil {
 		t.Fatalf("Error while getting absolute path: %v\n", err)
