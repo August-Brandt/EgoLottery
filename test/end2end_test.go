@@ -74,9 +74,12 @@ func TestEndToEnd(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error while getting current directory: %v\n", err)
 	}
-	correct := fmt.Sprintf(".git directories found:\n%s\n%s\n",
+	correct := fmt.Sprintf(".git directories found:\n%s\n%s\ntestDir:\n\tPath: %s\n\tCommits: 0\n\ntestSubDir:\n\tPath: %s\n\tCommits: 0\n\n",
 		filepath.Join(currentDir, "testDir", ".git"),
-		filepath.Join(currentDir, "testDir", "testSubDir", ".git"))
+		filepath.Join(currentDir, "testDir", "testSubDir", ".git"),
+		filepath.Join(currentDir, "testDir", ".git"),
+		filepath.Join(currentDir, "testDir", "testSubDir", ".git"),
+	)
 
 	if outString != correct {
 		t.Errorf("Incorrect output compared to expected\n\tActual:\n%s\n\tExpected:\n%s\n", outString, correct)

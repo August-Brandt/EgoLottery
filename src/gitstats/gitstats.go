@@ -28,18 +28,19 @@ func GetStats(repoPaths []string, email string) []*repo {
 		ref, err := repo.Head()
 		if err != nil {
 			log.Printf("Error while finding head of repo: %v\n", err)
-		}
-		history, err := repo.Log(&git.LogOptions{From: ref.Hash()})
-		if err != nil {
-			log.Printf("Error while reading log: %v\n", err)
-		}
-		history.ForEach(func(c *object.Commit) error {
-			if c.Author.Email != email {
-				return nil
+		} else {
+			history, err := repo.Log(&git.LogOptions{From: ref.Hash()})
+			if err != nil {
+				log.Printf("Error while reading log: %v\n", err)
 			}
-			newRepo.Commits++
-			return nil
-		})
+			history.ForEach(func(c *object.Commit) error {
+				if c.Author.Email != email {
+					return nil
+				}
+				newRepo.Commits++
+				return nil
+			})
+		}
 		repos = append(repos, newRepo)
 	}
 	return repos
