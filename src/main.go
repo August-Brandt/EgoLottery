@@ -41,7 +41,10 @@ func main() {
 
 	repos := gitstats.GetStats(dirs, "augustbrandt170@gmail.com")
 	for _, repo := range repos {
-		fmt.Printf("%s:\n\tPath: %s\n\tCommits: %d\n\n", repo.Name, repo.Path, repo.Commits)
+		fmt.Printf("%s:\n\tPath: %s\n\tCommits:\n", repo.Name, repo.Path)
+		for daysAgo, commits := range repo.Commits {
+			fmt.Printf("\t\t%d daysAgo: %d\n", daysAgo, commits)
+		}
 	}
 }
 

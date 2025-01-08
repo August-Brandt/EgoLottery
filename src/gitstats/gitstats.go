@@ -4,14 +4,15 @@ import (
 	"log"
 	"path/filepath"
 	"strings"
+	"time"
 
-	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing/object"
 )
 
 type repo struct {
 	Path, Name string
-	Commits    int
+	Commits    map[int]int
 }
 
 func GetStats(repoPaths []string, email string) []*repo {
@@ -20,6 +21,7 @@ func GetStats(repoPaths []string, email string) []*repo {
 		newRepo := &repo{}
 		newRepo.Path = path
 		newRepo.Name = filepath.Base(strings.Replace(path, "/.git", "", 1))
+		newRepo.Commits = make(map[int]int)
 
 		repo, err := git.PlainOpen(path)
 		if err != nil {
@@ -37,11 +39,18 @@ func GetStats(repoPaths []string, email string) []*repo {
 				if c.Author.Email != email {
 					return nil
 				}
-				newRepo.Commits++
+				daysAgo := getDaysAgo(c.Author.When)
+				newRepo.Commits[daysAgo]++
 				return nil
 			})
 		}
 		repos = append(repos, newRepo)
 	}
 	return repos
+}
+
+func getDaysAgo(date time.Time) int {
+	duration := time.Since(date)
+	days := int(duration.Hours() / 24)
+	return days
 }
