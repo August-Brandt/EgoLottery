@@ -10,6 +10,7 @@ import (
 
 	"github.com/August-Brandt/EgoLottery/gitfinder"
 	"github.com/August-Brandt/EgoLottery/gitstats"
+	"github.com/August-Brandt/EgoLottery/termprinter"
 )
 
 func main() {
@@ -40,12 +41,7 @@ func main() {
 	}
 
 	repos := gitstats.GetStats(dirs, "augustbrandt170@gmail.com")
-	for _, repo := range repos {
-		fmt.Printf("%s:\n\tPath: %s\n\tCommits:\n", repo.Name, repo.Path)
-		for daysAgo, commits := range repo.Commits {
-			fmt.Printf("\t\t%d daysAgo: %d\n", daysAgo, commits)
-		}
-	}
+	termprinter.PrintGraph(repos)
 }
 
 func PrintPath(path string, output *log.Logger) {

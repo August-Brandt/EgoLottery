@@ -10,15 +10,15 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/object"
 )
 
-type repo struct {
+type Repo struct {
 	Path, Name string
 	Commits    map[int]int
 }
 
-func GetStats(repoPaths []string, email string) []*repo {
-	repos := []*repo{}
+func GetStats(repoPaths []string, email string) []*Repo {
+	repos := []*Repo{}
 	for _, path := range repoPaths {
-		newRepo := &repo{}
+		newRepo := &Repo{}
 		newRepo.Path = path
 		newRepo.Name = filepath.Base(strings.Replace(path, "/.git", "", 1))
 		newRepo.Commits = make(map[int]int)
