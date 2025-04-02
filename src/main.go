@@ -42,7 +42,7 @@ func main() {
 		fmt.Println(dir)
 	}
 
-	repos := gitstats.GetStats(dirs, "augustbrandt170@gmail.com")
+	repos := gitstats.GetStats(dirs, "augustbrandt170@gmail.com", commitsGroupType)
 	termprinter.PrintGraph(repos)
 }
 
