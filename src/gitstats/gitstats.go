@@ -72,15 +72,11 @@ func getDaysAgo(from time.Time, to time.Time) int {
 
 func getWeeksAgo(from time.Time, to time.Time) int {
 	currentYear, currentWeek := to.ISOWeek()
-	fmt.Printf("CurrentYear, CurrentWeek: %d, %d\n", currentYear, currentWeek)
 	dateYear, dateWeek := from.ISOWeek()
-	fmt.Printf("date: %v | DateYear, DateWeek: %d, %d\n", from, dateYear, dateWeek)
 	if currentYear == dateYear {
-		fmt.Printf("Weeks ago: %d\n", currentWeek - dateWeek)
 		return currentWeek - dateWeek
 	} else {
 		numWeeksInYear := weeksInYear(dateYear)
-		fmt.Printf("NumWeeksInYear: %d | Weeks ago: %d\n", numWeeksInYear, (numWeeksInYear - dateWeek) + currentWeek)
 		return (numWeeksInYear - dateWeek) + currentWeek
 	}
 }
