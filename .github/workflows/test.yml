@@ -19,6 +19,6 @@ jobs:
       - name: update go.mod
         run: cd src && go mod tidy
       - name: Unit tests
-        run: cd src && go test
+        run: cd src && go test ./...
       - name: end to end test
         run: cd test && go test
