@@ -1,5 +1,6 @@
 data/
 dist/
+**go.sum
 
 # IDE
 .vscode/
