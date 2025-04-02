@@ -10,29 +10,28 @@ import (
 
 func PrintGraph(repos []*gitstats.Repo) error {
 	// Count the collective number of commits on each day
-	days := make(map[int]int)
+	commitGroups := make(map[int]int)
 	for _, repo := range repos {
-		for daysAgo, value := range repo.Commits {
-			days[daysAgo] += value
+		for timeAgo, value := range repo.Commits {
+			commitGroups[timeAgo] += value
 		}
 	}
-	fmt.Println(days)
 	// Find max number of commits
 	max := -1
-	max_day := -1
-	for day, numCommits := range days{
-		if day > max_day {
-			max_day = day
+	max_time := -1
+	for time, numCommits := range commitGroups{
+		if time > max_time {
+			max_time = time
 		}
 		if numCommits > max {
 			max = numCommits
 		}
 	}
-	fmt.Printf("Max %d\n", max)
+	// fmt.Printf("Max %d\n", max)
 
-	slc := streamlinechart.New(max_day, max)
-	for i := 0; i <= max_day; i++ {
-		commits, err  := days[i]
+	slc := streamlinechart.New(max_time+len(fmt.Sprintf("%d", max))+1, max)
+	for i := 0; i <= max_time; i++ {
+		commits, err  := commitGroups[i]
 		if !err {
 			slc.Push(0)
 		} else {
@@ -40,10 +39,6 @@ func PrintGraph(repos []*gitstats.Repo) error {
 		}
 	}
 	slc.Draw()
-    // for _, v := range days {
-    //     slc.Push(float64(v))
-    // }
-    // slc.Draw()
 
     fmt.Println(slc.View())
 	return nil
