@@ -25,8 +25,16 @@ func TestGetStats(t *testing.T) {
 	}
 
 	// Test
+	repos := GetStats([]string{filepath.Join(repo, ".git")}, "john@doe.org", "days")
+	
+	if len(repos) != 1 {
+		t.Errorf("Incorrect number of repos\n\tExpected: %d\n\tActual: %d", 1, len(repos))
+	}
+	if repos[0].Commits[0] != 1 {
+		t.Errorf("Incorrect number of commits in repo\n\tExpected: %d\n\tActual: %d", 1, len(repos))
+	}
 
-	repos := GetStats([]string{filepath.Join(repo, ".git")}, "john@doe.org")
+	repos = GetStats([]string{filepath.Join(repo, ".git")}, "john@doe.org", "days")
 	
 	if len(repos) != 1 {
 		t.Errorf("Incorrect number of repos\n\tExpected: %d\n\tActual: %d", 1, len(repos))

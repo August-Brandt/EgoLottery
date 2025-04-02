@@ -14,7 +14,9 @@ import (
 
 func main() {
 	var foldersFile string
+	var commitsGroupType string
 	flag.StringVar(&foldersFile, "file", "", "path to file containing directories to look for .git directory in")
+	flag.StringVar(&commitsGroupType, "group", "days", "Group commits by [days|weeks]")
 	depth := flag.Int("depth", 0, "The depth to recursively search for .git directories")
 	flag.Parse()
 	if foldersFile == "" { // Default file if non given
@@ -39,11 +41,15 @@ func main() {
 		fmt.Println(dir)
 	}
 
-	repos := gitstats.GetStats(dirs, "augustbrandt170@gmail.com")
+	repos := gitstats.GetStats(dirs, "augustbrandt170@gmail.com", commitsGroupType)
+	groupText := map[string]string{
+		"days": "daysAgo",
+		"weeks": "weeksAgo",
+	}
 	for _, repo := range repos {
 		fmt.Printf("%s:\n\tPath: %s\n\tCommits:\n", repo.Name, repo.Path)
-		for daysAgo, commits := range repo.Commits {
-			fmt.Printf("\t\t%d daysAgo: %d\n", daysAgo, commits)
+		for timeAgo, commits := range repo.Commits {
+			fmt.Printf("\t\t%d %s: %d\n", timeAgo, groupText[commitsGroupType], commits)
 		}
 	}
 }
