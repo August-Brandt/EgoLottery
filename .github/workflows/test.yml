@@ -16,6 +16,8 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.22.x'
+      - name: update go.mod
+        run: cd src && go mod tidy
       - name: Unit tests
         run: cd src && go test
       - name: end to end test
