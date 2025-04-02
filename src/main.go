@@ -15,7 +15,9 @@ import (
 
 func main() {
 	var foldersFile string
+	var commitsGroupType string
 	flag.StringVar(&foldersFile, "file", "", "path to file containing directories to look for .git directory in")
+	flag.StringVar(&commitsGroupType, "group", "days", "Group commits by [days|weeks]")
 	depth := flag.Int("depth", 0, "The depth to recursively search for .git directories")
 	flag.Parse()
 	if foldersFile == "" { // Default file if non given

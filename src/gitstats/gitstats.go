@@ -15,7 +15,7 @@ type Repo struct {
 	Commits    map[int]int
 }
 
-func GetStats(repoPaths []string, email string) []*Repo {
+func GetStats(repoPaths []string, email, groupType string) []*Repo {
 	repos := []*Repo{}
 	for _, path := range repoPaths {
 		newRepo := &Repo{}
@@ -35,22 +35,71 @@ func GetStats(repoPaths []string, email string) []*Repo {
 			if err != nil {
 				log.Printf("Error while reading log: %v\n", err)
 			}
-			history.ForEach(func(c *object.Commit) error {
-				if c.Author.Email != email {
-					return nil
+			if groupType == "days" {
+				err = getCommitsByDay(history, newRepo, email)
+				if err != nil {
+					log.Printf("Error on getting commits for repo %s:\n%v\n", path, err)
 				}
-				daysAgo := getDaysAgo(c.Author.When)
-				newRepo.Commits[daysAgo]++
-				return nil
-			})
+			} else if groupType == "weeks" {
+				err = getCommitsByWeek(history, newRepo, email)
+				if err != nil {
+					log.Printf("Error on getting commits for repo %s:\n%v\n", path, err)
+				}
+			}
 		}
 		repos = append(repos, newRepo)
 	}
 	return repos
 }
 
-func getDaysAgo(date time.Time) int {
-	duration := time.Since(date)
-	days := int(duration.Hours() / 24)
-	return days
+func weeksInYear(year int) int {
+	day := 31
+	date := time.Date(year, time.December, day, 0, 0, 0, 0, time.Local)
+	_, dateWeek := date.ISOWeek()
+	for dateWeek == 1 {
+		day--
+		date = time.Date(year, time.December, day, 0, 0, 0, 0, time.Local)
+		_, dateWeek = date.ISOWeek()
+	}
+	return dateWeek
+}
+
+func getDaysAgo(from time.Time, to time.Time) int {
+	diff := to.Sub(from)
+	return int(diff.Hours()/24)
+}
+
+func getWeeksAgo(from time.Time, to time.Time) int {
+	currentYear, currentWeek := to.ISOWeek()
+	dateYear, dateWeek := from.ISOWeek()
+	if currentYear == dateYear {
+		return currentWeek - dateWeek
+	} else {
+		numWeeksInYear := weeksInYear(dateYear)
+		return (numWeeksInYear - dateWeek) + currentWeek
+	}
+}
+
+func getCommitsByDay(history object.CommitIter, repo *Repo, email string) error {
+	history.ForEach(func(c *object.Commit) error {
+		if c.Author.Email != email {
+			return nil
+		}
+		daysAgo := getDaysAgo(c.Author.When, time.Now())
+		repo.Commits[daysAgo]++
+		return nil
+	})
+	return nil
+}
+
+func getCommitsByWeek(history object.CommitIter, repo *Repo, email string) error {
+	history.ForEach(func(c *object.Commit) error {
+		if c.Author.Email != email {
+			return nil
+		}
+		WeeksAgo := getWeeksAgo(c.Author.When, time.Now())
+		repo.Commits[WeeksAgo]++
+		return nil
+	})
+	return nil
 }
