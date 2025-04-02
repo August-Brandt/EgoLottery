@@ -1,7 +1,6 @@
 package gitstats
 
 import (
-	"fmt"
 	"log"
 	"path/filepath"
 	"strings"
