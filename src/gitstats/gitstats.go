@@ -54,24 +54,27 @@ func GetStats(repoPaths []string, email, groupType string) []*Repo {
 }
 
 func weeksInYear(year int) int {
-	// Check if it's a leap year
-	if time.Date(year, time.December, 31, 0, 0, 0, 0, time.UTC).YearDay() == 366 {
-		return 52 + 1 // Leap year has 53 weeks in some cases
+	day := 31
+	date := time.Date(year, time.December, day, 0, 0, 0, 0, time.Local)
+	_, dateWeek := date.ISOWeek()
+	for dateWeek == 1 {
+		day--
+		date = time.Date(year, time.December, day, 0, 0, 0, 0, time.Local)
+		_, dateWeek = date.ISOWeek()
 	}
-	return 52 // Normal years usually have 52 full weeks
+	return dateWeek
 }
 
-func getDaysAgo(date time.Time) int {
-	duration := time.Since(date)
-	days := int(duration.Hours() / 24)
-	return days
+func getDaysAgo(from time.Time, to time.Time) int {
+	diff := to.Sub(from)
+	return int(diff.Hours()/24)
 }
 
-func getWeeksAgo(date time.Time) int {
-	currentYear, currentWeek := time.Now().ISOWeek()
+func getWeeksAgo(from time.Time, to time.Time) int {
+	currentYear, currentWeek := to.ISOWeek()
 	fmt.Printf("CurrentYear, CurrentWeek: %d, %d\n", currentYear, currentWeek)
-	dateYear, dateWeek := date.ISOWeek()
-	fmt.Printf("date: %v | DateYear, DateWeek: %d, %d\n", date, dateYear, dateWeek)
+	dateYear, dateWeek := from.ISOWeek()
+	fmt.Printf("date: %v | DateYear, DateWeek: %d, %d\n", from, dateYear, dateWeek)
 	if currentYear == dateYear {
 		fmt.Printf("Weeks ago: %d\n", currentWeek - dateWeek)
 		return currentWeek - dateWeek
@@ -87,7 +90,7 @@ func getCommitsByDay(history object.CommitIter, repo *Repo, email string) error 
 		if c.Author.Email != email {
 			return nil
 		}
-		daysAgo := getDaysAgo(c.Author.When)
+		daysAgo := getDaysAgo(c.Author.When, time.Now())
 		repo.Commits[daysAgo]++
 		return nil
 	})
@@ -99,7 +102,7 @@ func getCommitsByWeek(history object.CommitIter, repo *Repo, email string) error
 		if c.Author.Email != email {
 			return nil
 		}
-		WeeksAgo := getWeeksAgo(c.Author.When)
+		WeeksAgo := getWeeksAgo(c.Author.When, time.Now())
 		repo.Commits[WeeksAgo]++
 		return nil
 	})
