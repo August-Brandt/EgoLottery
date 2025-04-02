@@ -1,6 +1,7 @@
 module github.com/August-Brandt/EgoLottery
 
 go 1.22.5
+
 require github.com/go-git/go-git/v5 v5.13.0
 
 require (
