@@ -17,26 +17,32 @@ import (
 func main() {
 	var foldersFile string
 	var commitsGroupType string
+	var directoriesInput string
 	configDir, err := os.UserConfigDir()
 	if err != nil {
 		panic(err)
 	}
 	flag.StringVar(&foldersFile, "file", path.Join(configDir, "egolottery", "directories"), "path to file containing directories to look for .git directory in")
 	flag.StringVar(&commitsGroupType, "group", "days", "Group commits by [days|weeks]")
+	flag.StringVar(&directoriesInput, "dirs", "", "Commaseperated list of directories. Will override the file flag")
 	depth := flag.Int("depth", 0, "The depth to recursively search for .git directories")
 	flag.Parse()
-
-	file, err := os.Open(foldersFile)
-	if err != nil {
-		panic(err)
+	
+	var directories []string
+	if directoriesInput == "" {
+		file, err := os.Open(foldersFile)
+		if err != nil {
+			panic(err)
+		}
+		defer file.Close()
+		data, err := io.ReadAll(file)
+		if err != nil {
+			panic(err)
+		}
+		directories = strings.Split(string(data), "\n")
+	} else {
+		directories = strings.Split(directoriesInput, ",")
 	}
-	defer file.Close()
-
-	data, err := io.ReadAll(file)
-	if err != nil {
-		panic(err)
-	}
-	directories := strings.Split(string(data), "\n")
 
 	fmt.Println(".git directories found:")
 	dirs := gitfinder.FindGitRepos(directories, *depth)
