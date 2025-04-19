@@ -7,6 +7,7 @@ toolchain go1.24.1
 require (
 	github.com/NimbleMarkets/ntcharts v0.3.1
 	github.com/go-git/go-git/v5 v5.14.0
+	github.com/kkyr/fig v0.4.0
 )
 
 require (
@@ -28,7 +29,6 @@ require (
 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
-	github.com/kkyr/fig v0.4.0 // indirect
 	github.com/lrstanley/bubblezone v0.0.0-20240914071701-b48c55a5e78e // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
