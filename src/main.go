@@ -12,25 +12,57 @@ import (
 	"github.com/August-Brandt/EgoLottery/gitfinder"
 	"github.com/August-Brandt/EgoLottery/gitstats"
 	"github.com/August-Brandt/EgoLottery/termprinter"
+
+	"github.com/kkyr/fig"
 )
 
+type Config struct {
+	DefaultDirectoriesFile string `fig:"file"`
+	GroupType              string `fig:"group" default:"days"`
+	TimeAgo                int    `fig:"timeago" default:"150"`
+	SearchDepth            int    `fig:"searchdepth" default:"0"`
+}
+
 func main() {
-	var foldersFile string
-	var commitsGroupType string
-	var directoriesInput string
+	cfg := &Config{}
 	configDir, err := os.UserConfigDir()
 	if err != nil {
 		panic(err)
 	}
-	flag.StringVar(&foldersFile, "file", path.Join(configDir, "egolottery", "directories"), "path to file containing directories to look for .git directory in")
-	flag.StringVar(&commitsGroupType, "group", "days", "Group commits by [days|weeks]")
-	flag.StringVar(&directoriesInput, "dirs", "", "Commaseperated list of directories. Will override the file flag")
-	depth := flag.Int("depth", 0, "The depth to recursively search for .git directories")
-	flag.Parse()
+	err = fig.Load(cfg, fig.File("config.yaml"), fig.Dirs(".", path.Join(configDir, "egolottery", "directories.txt")))
+	if err != nil {
+		fmt.Println("Error loading config:")
+		panic(err)
+	}
+	fmt.Printf("Initial Config:\n%+v\n", *cfg)
 	
+	var foldersFile string
+	var commitsGroupType string
+	var directoriesInput string
+	var depth int
+	flag.StringVar(&foldersFile, "file", "", "path to file containing directories to look for .git directory in")
+	flag.StringVar(&commitsGroupType, "group", "", "Group commits by [days|weeks]")
+	flag.StringVar(&directoriesInput, "dirs", "", "Commaseperated list of directories. Will override the file flag")
+	flag.IntVar(&depth, "depth", -1, "The depth to recursively search for .git directories")
+	flag.Parse()
+
+	// Change config based on flags
+	if commitsGroupType != "" {
+		cfg.GroupType = commitsGroupType
+	}
+	if depth != -1 {
+		cfg.SearchDepth = depth
+	}
+
 	var directories []string
 	if directoriesInput == "" {
-		file, err := os.Open(foldersFile)
+		var filePath string
+		if foldersFile != "" {
+			filePath = foldersFile
+		} else {
+			filePath = cfg.DefaultDirectoriesFile
+		}
+		file, err := os.Open(filePath)
 		if err != nil {
 			panic(err)
 		}
@@ -40,17 +72,18 @@ func main() {
 			panic(err)
 		}
 		directories = strings.Split(string(data), "\n")
-	} else {
-		directories = strings.Split(directoriesInput, ",")
+		} else {
+			directories = strings.Split(directoriesInput, ",")
 	}
-
+	fmt.Printf("Config:\n%+v\n", cfg)
+		
 	fmt.Println(".git directories found:")
-	dirs := gitfinder.FindGitRepos(directories, *depth)
+	dirs := gitfinder.FindGitRepos(directories, cfg.SearchDepth)
 	for _, dir := range dirs {
 		fmt.Println(dir)
 	}
 
-	repos := gitstats.GetStats(dirs, "augustbrandt170@gmail.com", commitsGroupType)
+	repos := gitstats.GetStats(dirs, "augustbrandt170@gmail.com", cfg.GroupType)
 	termprinter.PrintGraph(repos)
 }
 
