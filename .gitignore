@@ -1,6 +1,7 @@
 data/
 dist/
 **go.sum
+config.yaml
 
 # IDE
 .vscode/
