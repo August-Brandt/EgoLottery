@@ -17,10 +17,11 @@ import (
 )
 
 type Config struct {
-	DefaultDirectoriesFile string `fig:"file"`
-	GroupType              string `fig:"group" default:"days"`
-	TimeAgo                int    `fig:"timeago" default:"150"`
-	SearchDepth            int    `fig:"searchdepth" default:"0"`
+	DefaultDirectoriesFile string   `fig:"file"`
+	GroupType              string   `fig:"group" default:"days"`
+	TimeAgo                int      `fig:"timeago" default:"150"`
+	SearchDepth            int      `fig:"searchdepth" default:"0"`
+	Emails                 []string `fig:"emails" validate:"required"`
 }
 
 func main() {
@@ -29,13 +30,13 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	err = fig.Load(cfg, fig.File("config.yaml"), fig.Dirs(".", path.Join(configDir, "egolottery", "directories.txt")))
+	err = fig.Load(cfg, fig.File("config.yaml"), fig.Dirs(".", path.Join(configDir, "egolottery")))
 	if err != nil {
 		fmt.Println("Error loading config:")
 		panic(err)
 	}
 	fmt.Printf("Initial Config:\n%+v\n", *cfg)
-	
+
 	var foldersFile string
 	var commitsGroupType string
 	var directoriesInput string
@@ -72,11 +73,11 @@ func main() {
 			panic(err)
 		}
 		directories = strings.Split(string(data), "\n")
-		} else {
-			directories = strings.Split(directoriesInput, ",")
+	} else {
+		directories = strings.Split(directoriesInput, ",")
 	}
 	fmt.Printf("Config:\n%+v\n", cfg)
-		
+
 	fmt.Println(".git directories found:")
 	dirs := gitfinder.FindGitRepos(directories, cfg.SearchDepth)
 	for _, dir := range dirs {
