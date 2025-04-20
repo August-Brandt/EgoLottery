@@ -35,7 +35,6 @@ func main() {
 		fmt.Println("Error loading config:")
 		panic(err)
 	}
-	fmt.Printf("Initial Config:\n%+v\n", *cfg)
 
 	var foldersFile string
 	var commitsGroupType string
@@ -76,7 +75,6 @@ func main() {
 	} else {
 		directories = strings.Split(directoriesInput, ",")
 	}
-	fmt.Printf("Config:\n%+v\n", cfg)
 
 	fmt.Println(".git directories found:")
 	dirs := gitfinder.FindGitRepos(directories, cfg.SearchDepth)
