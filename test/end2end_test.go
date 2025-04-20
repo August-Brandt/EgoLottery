@@ -39,10 +39,10 @@ func TestEndToEndFile(t *testing.T) {
 
 	splitOut := strings.Split(outString, "\n")
 	if splitOut[0] != ".git directories found:" {
-		t.Errorf("Incorrect output compared to expected\n\tActual:\n%s\n\tExpected:\n.git directories found:\n", outString)
+		t.Errorf("Incorrect output compared to expected\n\tActual:\n%s\n\tExpected:\n.git directories found:\n", splitOut[0])
 	}
 	if splitOut[1] != filepath.Join(currentDir, ".git") {
-		t.Errorf("Incorrect output compared to expected\n\tActual:\n%s\n\tExpected:\n%s\n", outString, filepath.Join(currentDir, ".git"))
+		t.Errorf("Incorrect output compared to expected\n\tActual:\n%s\n\tExpected:\n%s\n", splitOut[1], filepath.Join(currentDir, ".git"))
 	}
 	if len(splitOut) < 2 {
 		t.Errorf("Output too short")
@@ -67,10 +67,10 @@ func TestEndToEndDirs(t *testing.T) {
 
 	splitOut := strings.Split(outString, "\n")
 	if splitOut[0] != ".git directories found:" {
-		t.Errorf("Incorrect output compared to expected\n\tActual:\n%s\n\tExpected:\n.git directories found:\n", outString)
+		t.Errorf("Incorrect output compared to expected\n\tActual:\n%s\n\tExpected:\n.git directories found:\n", splitOut[0])
 	}
 	if splitOut[1] != filepath.Join(currentDir, ".git") {
-		t.Errorf("Incorrect output compared to expected\n\tActual:\n%s\n\tExpected:\n%s\n", outString, filepath.Join(currentDir, ".git"))
+		t.Errorf("Incorrect output compared to expected\n\tActual:\n%s\n\tExpected:\n%s\n", splitOut[1], filepath.Join(currentDir, ".git"))
 	}
 	if len(splitOut) < 2 {
 		t.Errorf("Output too short")
