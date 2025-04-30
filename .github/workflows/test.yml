@@ -22,13 +22,14 @@ jobs:
         run: |
           mkdir ~/.config/egolottery
           touch ~/.config/egolottery/config.yaml
-          echo 'file: "/home/august/.config/egolottery/directories"' >> ~/.config/egolottery/config.yaml
-          echo 'group: "days"' >> ~/.config/egolottery/config.yaml
-          echo 'timeago: 150' >> ~/.config/egolottery/config.yaml
-          echo 'searchdepth: 0' >> ~/.config/egolottery/config.yaml
-          echo 'emails:' >> ~/.config/egolottery/config.yaml
-          echo '  - "augustbrandt170@gmail.com"' >> ~/.config/egolottery/config.yaml
-          echo '  - "aubr@itu.dk"' >> ~/.config/egolottery/config.yaml
+          echo directories:  >> ~/.config/egolottery/config.yaml
+          echo "  - \"$PWD\"" >> ~/.config/egolottery/config.yaml
+          echo group: \"days\" >> ~/.config/egolottery/config.yaml
+          echo timeago: 150 >> ~/.config/egolottery/config.yaml
+          echo searchdepth: 0 >> ~/.config/egolottery/config.yaml
+          echo emails: >> ~/.config/egolottery/config.yaml
+          echo \ \ - \"augustbrandt170@gmail.com\" >> ~/.config/egolottery/config.yaml
+          echo \ \ - \"aubr@itu.dk\" >> ~/.config/egolottery/config.yaml
       - name: Unit tests
         run: cd src && go test ./...
       - name: end to end test
