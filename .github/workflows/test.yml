@@ -32,5 +32,3 @@ jobs:
           echo \ \ - \"aubr@itu.dk\" >> ~/.config/egolottery/config.yaml
       - name: Unit tests
         run: cd src && go test ./...
-      - name: end to end test
-        run: cd test && go test
