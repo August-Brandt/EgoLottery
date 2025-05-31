@@ -16,11 +16,11 @@ import (
 )
 
 type Config struct {
-	Directories []string `fig:"directories" default:"."`
-	GroupType   string   `fig:"group" default:"days"`
+	GroupType   string   `fig:"grouptype" default:"days"`
 	TimeAgo     int      `fig:"timeago" default:"150"`
 	SearchDepth int      `fig:"searchdepth" default:"0"`
 	Emails      []string `fig:"emails" validate:"required"`
+	Directories []string `fig:"directories" default:"."`
 }
 
 // Flag vars
@@ -94,6 +94,10 @@ func initConfig() {
 
 			if answer == "y" {
 				createConfig(stdinReader, cfgFile)
+				err = fig.Load(Cfg, fig.File(path.Base(cfgFile)), fig.Dirs(path.Dir(cfgFile)))
+				if err != nil {
+					panic(err)
+				}
 			} else {
 				os.Exit(1)
 			}
