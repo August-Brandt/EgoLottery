@@ -4,18 +4,25 @@ import (
 	"fmt"
 
 	"github.com/August-Brandt/EgoLottery/gitstats"
+	"github.com/August-Brandt/EgoLottery/config"
 
 	"github.com/NimbleMarkets/ntcharts/linechart/streamlinechart"
 )
 
-func PrintGraph(repos []*gitstats.Repo) error {
-	// Count the collective number of commits on each day
+func PrintGraph(repos []*gitstats.Repo, config *config.Config) error {
+	// Count the collective number of commits on each da
 	commitGroups := make(map[int]int)
 	for _, repo := range repos {
 		for timeAgo, value := range repo.Commits {
 			commitGroups[timeAgo] += value
 		}
 	}
+	if len(commitGroups) == 0 { // Create empty chart when no commits
+		chart := createChart(config.TimeAgo, 2, map[int]int{})
+		fmt.Println(chart.View())
+		return nil
+	}
+
 	// Find max number of commits
 	max := -1
 	max_time := -1
@@ -27,11 +34,16 @@ func PrintGraph(repos []*gitstats.Repo) error {
 			max = numCommits
 		}
 	}
-	// fmt.Printf("Max %d\n", max)
 
-	slc := streamlinechart.New(max_time+len(fmt.Sprintf("%d", max))+1, max)
-	for i := 0; i <= max_time; i++ {
-		commits, err  := commitGroups[i]
+	chart := createChart(config.TimeAgo, max, commitGroups)
+    fmt.Println(chart.View())
+	return nil
+}
+
+func createChart(maxtime, maxval int, commits map[int]int) streamlinechart.Model {
+	slc := streamlinechart.New(maxtime+len(fmt.Sprintf("%d", maxval))+1, maxval)
+	for i := 0; i <= maxtime; i++ {
+		commits, err  := commits[i]
 		if !err {
 			slc.Push(0)
 		} else {
@@ -40,6 +52,5 @@ func PrintGraph(repos []*gitstats.Repo) error {
 	}
 	slc.Draw()
 
-    fmt.Println(slc.View())
-	return nil
+	return slc
 }

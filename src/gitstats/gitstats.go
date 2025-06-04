@@ -3,9 +3,11 @@ package gitstats
 import (
 	"log"
 	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 
+	"github.com/August-Brandt/EgoLottery/config"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/object"
 )
@@ -15,9 +17,9 @@ type Repo struct {
 	Commits    map[int]int
 }
 
-func GetStats(repoPaths []string, email, groupType string) []*Repo {
+func GetStats(gitPaths []string, config *config.Config) []*Repo {
 	repos := []*Repo{}
-	for _, path := range repoPaths {
+	for _, path := range gitPaths {
 		newRepo := &Repo{}
 		newRepo.Path = path
 		newRepo.Name = filepath.Base(strings.Replace(path, "/.git", "", 1))
@@ -35,13 +37,13 @@ func GetStats(repoPaths []string, email, groupType string) []*Repo {
 			if err != nil {
 				log.Printf("Error while reading log: %v\n", err)
 			}
-			if groupType == "days" {
-				err = getCommitsByDay(history, newRepo, email)
+			if config.GroupType == "days" {
+				err = getCommitsByDay(history, newRepo, config.Emails, config.TimeAgo)
 				if err != nil {
 					log.Printf("Error on getting commits for repo %s:\n%v\n", path, err)
 				}
-			} else if groupType == "weeks" {
-				err = getCommitsByWeek(history, newRepo, email)
+			} else if config.GroupType == "weeks" {
+				err = getCommitsByWeek(history, newRepo, config.Emails, config.TimeAgo)
 				if err != nil {
 					log.Printf("Error on getting commits for repo %s:\n%v\n", path, err)
 				}
@@ -66,7 +68,7 @@ func weeksInYear(year int) int {
 
 func getDaysAgo(from time.Time, to time.Time) int {
 	diff := to.Sub(from)
-	return int(diff.Hours()/24)
+	return int(diff.Hours() / 24)
 }
 
 func getWeeksAgo(from time.Time, to time.Time) int {
@@ -80,25 +82,29 @@ func getWeeksAgo(from time.Time, to time.Time) int {
 	}
 }
 
-func getCommitsByDay(history object.CommitIter, repo *Repo, email string) error {
+func getCommitsByDay(history object.CommitIter, repo *Repo, emails []string, timeAgo int) error {
 	history.ForEach(func(c *object.Commit) error {
-		if c.Author.Email != email {
+		if !slices.Contains(emails, c.Author.Email) {
 			return nil
 		}
 		daysAgo := getDaysAgo(c.Author.When, time.Now())
-		repo.Commits[daysAgo]++
+		if daysAgo <= timeAgo {
+			repo.Commits[daysAgo]++
+		}
 		return nil
 	})
 	return nil
 }
 
-func getCommitsByWeek(history object.CommitIter, repo *Repo, email string) error {
+func getCommitsByWeek(history object.CommitIter, repo *Repo, emails []string, timeAgo int) error {
 	history.ForEach(func(c *object.Commit) error {
-		if c.Author.Email != email {
+		if !slices.Contains(emails, c.Author.Email) {
 			return nil
 		}
-		WeeksAgo := getWeeksAgo(c.Author.When, time.Now())
-		repo.Commits[WeeksAgo]++
+		weeksAgo := getWeeksAgo(c.Author.When, time.Now())
+		if weeksAgo <= timeAgo {
+			repo.Commits[weeksAgo]++
+		}
 		return nil
 	})
 	return nil

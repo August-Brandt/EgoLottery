@@ -7,9 +7,14 @@ import (
 	"time"
 
 	"github.com/August-Brandt/EgoLottery/testutils"
+	"github.com/August-Brandt/EgoLottery/config"
 )
-
-
+var cfg = &config.Config{
+	GroupType: "days",
+	TimeAgo: 60,
+	SearchDepth: 0,
+	Emails: []string{"john@doe.org"},
+}
 
 func TestGetStatsForDays(t *testing.T) {
 	// Setup
@@ -26,7 +31,8 @@ func TestGetStatsForDays(t *testing.T) {
 	}
 
 	// Test
-	repos := GetStats([]string{filepath.Join(repo, ".git")}, "john@doe.org", "days")
+	
+	repos := GetStats([]string{filepath.Join(repo, ".git")}, cfg)
 	if len(repos) != 1 {
 		t.Errorf("Incorrect number of repos\n\tExpected: %d\n\tActual: %d", 1, len(repos))
 	}
@@ -51,7 +57,7 @@ func TestGetStatsForWeeks(t *testing.T) {
 
 	// Test	
 
-	repos := GetStats([]string{filepath.Join(repo, ".git")}, "john@doe.org", "days")
+	repos := GetStats([]string{filepath.Join(repo, ".git")}, cfg)
 	if len(repos) != 1 {
 		t.Errorf("Incorrect number of repos\n\tExpected: %d\n\tActual: %d", 1, len(repos))
 	}

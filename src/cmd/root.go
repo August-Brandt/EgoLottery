@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/August-Brandt/EgoLottery/config"
 	"github.com/August-Brandt/EgoLottery/gitfinder"
 	"github.com/August-Brandt/EgoLottery/gitstats"
 	"github.com/August-Brandt/EgoLottery/termprinter"
@@ -15,16 +16,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type Config struct {
-	GroupType   string   `fig:"grouptype" default:"days"`
-	TimeAgo     int      `fig:"timeago" default:"150"`
-	SearchDepth int      `fig:"searchdepth" default:"0"`
-	Emails      []string `fig:"emails" validate:"required"`
-	Directories []string `fig:"directories" default:"."`
-}
-
 // Flag vars
-var Cfg *Config
+var Cfg *config.Config
 var cfgFile string
 var commitGrouping string
 var searchDepth int
@@ -42,8 +35,8 @@ discription of EgoLottery`,
 			fmt.Println(dir)
 		}
 
-		repos := gitstats.GetStats(dirs, "augustbrandt170@gmail.com", Cfg.GroupType)
-		termprinter.PrintGraph(repos)
+		repos := gitstats.GetStats(dirs, Cfg)
+		termprinter.PrintGraph(repos, Cfg)
 	},
 }
 
@@ -64,7 +57,7 @@ func init() {
 }
 
 func initConfig() {
-	Cfg = &Config{}
+	Cfg = &config.Config{}
 	var configDir string
 	var err error
 	if cfgFile == "" {
