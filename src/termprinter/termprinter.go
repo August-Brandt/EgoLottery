@@ -2,22 +2,23 @@ package termprinter
 
 import (
 	"fmt"
+	"os"
 
-	"github.com/August-Brandt/EgoLottery/gitstats"
 	"github.com/August-Brandt/EgoLottery/config"
+	"github.com/August-Brandt/EgoLottery/gitstats"
 
 	"github.com/NimbleMarkets/ntcharts/linechart/streamlinechart"
 )
 
-func PrintGraph(repos []*gitstats.Repo, config *config.Config) error {
-	// Count the collective number of commits on each da
+func PrintGraph(repos []*gitstats.Repo, config *config.Config, output string) error {
+	// Count the collective number of commits on each time interval
 	commitGroups := make(map[int]int)
 	for _, repo := range repos {
 		for timeAgo, value := range repo.Commits {
 			commitGroups[timeAgo] += value
 		}
 	}
-	if len(commitGroups) == 0 { // Create empty chart when no commits
+	if len(commitGroups) == 0 { // Fallback when no commits. Create empty chart
 		chart := createChart(config.TimeAgo, 2, map[int]int{})
 		fmt.Println(chart.View())
 		return nil
@@ -36,7 +37,14 @@ func PrintGraph(repos []*gitstats.Repo, config *config.Config) error {
 	}
 
 	chart := createChart(config.TimeAgo, max, commitGroups)
-    fmt.Println(chart.View())
+	if output == "" {
+		fmt.Println(chart.View())
+	} else {
+		err := os.WriteFile(output, []byte(chart.View()), 0666)
+		if err != nil {
+			panic(err)
+		}
+	}
 	return nil
 }
 

@@ -22,6 +22,7 @@ var cfgFile string
 var commitGrouping string
 var searchDepth int
 var flagDirectories string
+var outputFile string
 
 var rootCmd = &cobra.Command{
 	Use:   "egolottery",
@@ -29,6 +30,13 @@ var rootCmd = &cobra.Command{
 	Long: `This is the long 
 discription of EgoLottery`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if outputFile != "" {
+			_, err := os.Create(outputFile)
+			if err != nil {
+				fmt.Printf("Issue with creating or truncating output file")
+			}
+		}
+
 		fmt.Println(".git directories found:")
 		dirs := gitfinder.FindGitRepos(Cfg.Directories, Cfg.SearchDepth)
 		for _, dir := range dirs {
@@ -36,7 +44,7 @@ discription of EgoLottery`,
 		}
 
 		repos := gitstats.GetStats(dirs, Cfg)
-		termprinter.PrintGraph(repos, Cfg)
+		termprinter.PrintGraph(repos, Cfg, outputFile)
 	},
 }
 
@@ -54,6 +62,7 @@ func init() {
 	rootCmd.Flags().StringVarP(&commitGrouping, "group", "g", "", "Grouping commits by [days|weeks]")
 	rootCmd.Flags().IntVar(&searchDepth, "depth", -1, "The depth to recursively search for .git directories")
 	rootCmd.Flags().StringVar(&flagDirectories, "dirs", "", "Comma separated list of directories. Will override the file flag")
+	rootCmd.Flags().StringVarP(&outputFile, "out", "o", "", "Specify an output file which will be used for outputting the graph instead of printing to the terminal")
 }
 
 func initConfig() {
