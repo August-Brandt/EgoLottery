@@ -16,7 +16,7 @@ import (
 // Flag vars
 var Cfg *config.Config
 var cfgFile string
-var outputFile string
+
 
 var rootCmd = &cobra.Command{
 	Use:   "egolottery",
@@ -24,21 +24,7 @@ var rootCmd = &cobra.Command{
 	Long: `This is the long 
 discription of EgoLottery`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if outputFile != "" {
-			_, err := os.Create(outputFile)
-			if err != nil {
-				fmt.Printf("Issue with creating or truncating output file")
-			}
-		}
-
-		fmt.Println(".git directories found:")
-		dirs := gitfinder.FindGitRepos(Cfg.Directories, Cfg.SearchDepth)
-		for _, dir := range dirs {
-			fmt.Println(dir)
-		}
-
-		repos := gitstats.GetStats(dirs, Cfg)
-		termprinter.PrintGraph(repos, Cfg, outputFile)
+		cmd.Help()
 	},
 }
 
@@ -52,7 +38,6 @@ func Execute() {
 func init() {
 	initConfig()
 	rootCmd.Flags().StringVar(&cfgFile, "config", "", "Path to config file for EgoLottery. Default is ~/.config/egolottery/config.yaml")
-	rootCmd.Flags().StringVarP(&outputFile, "out", "o", "", "Specify an output file which will be used for outputting the graph instead of printing to the terminal")
 }
 
 func initConfig() {

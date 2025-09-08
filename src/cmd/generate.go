@@ -18,12 +18,21 @@ var searchDepth int
 var flagDirectories []string
 var timeAgo int
 var groupingOptions []string = []string{"days", "weeks"}
+var outputFile string
 
 var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Pull data from git repositories and generate visualization",
 	Long:  "Pull git commit data from the specified directories and generate and output a graphical visualization",
 	Run: func(cmd *cobra.Command, args []string) {
+		if outputFile != "" {
+			_, err := os.Create(outputFile)
+			if err != nil {
+				fmt.Printf("Issue with creating or truncating output file")
+				os.Exit(1)
+			}
+		}
+
 		fmt.Println(".git directories found:")
 		dirs := gitfinder.FindGitRepos(Cfg.Directories, Cfg.SearchDepth)
 		for _, dir := range dirs {
@@ -31,7 +40,7 @@ var generateCmd = &cobra.Command{
 		}
 
 		repos := gitstats.GetStats(dirs, Cfg)
-		termprinter.PrintGraph(repos, Cfg)
+		termprinter.PrintGraph(repos, Cfg, outputFile)
 	},
 }
 
@@ -44,6 +53,7 @@ func init() {
 	generateCmd.Flags().IntVar(&searchDepth, "depth", -1, "The depth to recursively search for .git directories")
 	generateCmd.Flags().StringSliceVar(&flagDirectories, "dirs", []string{}, "Comma separated list of directories in which to look for git repositories. Replaces directories in config")
 	generateCmd.Flags().IntVar(&timeAgo, "timeago", -1, "The amount of time to include in the final graph")
+	generateCmd.Flags().StringVarP(&outputFile, "out", "o", "", "Specify an output file which will be used for outputting the visualization instead of printing to the terminal")
 }
 
 func initGenerateConfig() {
