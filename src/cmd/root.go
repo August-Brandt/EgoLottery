@@ -22,6 +22,7 @@ var cfgFile string
 var commitGrouping string
 var searchDepth int
 var flagDirectories string
+var timeAgo int
 
 var rootCmd = &cobra.Command{
 	Use:   "egolottery",
@@ -54,6 +55,7 @@ func init() {
 	rootCmd.Flags().StringVarP(&commitGrouping, "group", "g", "", "Grouping commits by [days|weeks]")
 	rootCmd.Flags().IntVar(&searchDepth, "depth", -1, "The depth to recursively search for .git directories")
 	rootCmd.Flags().StringVar(&flagDirectories, "dirs", "", "Comma separated list of directories. Will override the file flag")
+	rootCmd.Flags().IntVar(&timeAgo, "timeago", -1, "The amount of time to include in the final graph")
 }
 
 func initConfig() {
@@ -113,6 +115,13 @@ func initConfig() {
 	if flagDirectories != "" {
 		fmt.Println("Hello")
 		Cfg.Directories = strings.Split(flagDirectories, ",")
+	}
+	if timeAgo != -1 {
+		if timeAgo < 1 {
+			fmt.Println("'timeago' values should be above 1!")
+			os.Exit(1)
+		}
+		Cfg.TimeAgo = timeAgo
 	}
 }
 
