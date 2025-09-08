@@ -9,9 +9,6 @@ import (
 	"strings"
 
 	"github.com/August-Brandt/EgoLottery/config"
-	"github.com/August-Brandt/EgoLottery/gitfinder"
-	"github.com/August-Brandt/EgoLottery/gitstats"
-	"github.com/August-Brandt/EgoLottery/termprinter"
 	"github.com/kkyr/fig"
 	"github.com/spf13/cobra"
 )
@@ -19,10 +16,6 @@ import (
 // Flag vars
 var Cfg *config.Config
 var cfgFile string
-var commitGrouping string
-var searchDepth int
-var flagDirectories string
-var timeAgo int
 
 var rootCmd = &cobra.Command{
 	Use:   "egolottery",
@@ -30,14 +23,7 @@ var rootCmd = &cobra.Command{
 	Long: `This is the long 
 discription of EgoLottery`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(".git directories found:")
-		dirs := gitfinder.FindGitRepos(Cfg.Directories, Cfg.SearchDepth)
-		for _, dir := range dirs {
-			fmt.Println(dir)
-		}
-
-		repos := gitstats.GetStats(dirs, Cfg)
-		termprinter.PrintGraph(repos, Cfg)
+		cmd.Help()
 	},
 }
 
@@ -49,13 +35,8 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
-
+	initConfig()
 	rootCmd.Flags().StringVar(&cfgFile, "config", "", "Path to config file for EgoLottery. Default is ~/.config/egolottery/config.yaml")
-	rootCmd.Flags().StringVarP(&commitGrouping, "group", "g", "", "Grouping commits by [days|weeks]")
-	rootCmd.Flags().IntVar(&searchDepth, "depth", -1, "The depth to recursively search for .git directories")
-	rootCmd.Flags().StringVar(&flagDirectories, "dirs", "", "Comma separated list of directories. Will override the file flag")
-	rootCmd.Flags().IntVar(&timeAgo, "timeago", -1, "The amount of time to include in the final graph")
 }
 
 func initConfig() {
@@ -104,24 +85,6 @@ func initConfig() {
 		fmt.Printf("err type: %T\n", err)
 
 		panic(err)
-	}
-
-	if commitGrouping != "" {
-		Cfg.GroupType = commitGrouping
-	}
-	if searchDepth != -1 {
-		Cfg.SearchDepth = searchDepth
-	}
-	if flagDirectories != "" {
-		fmt.Println("Hello")
-		Cfg.Directories = strings.Split(flagDirectories, ",")
-	}
-	if timeAgo != -1 {
-		if timeAgo < 1 {
-			fmt.Println("'timeago' values should be above 1!")
-			os.Exit(1)
-		}
-		Cfg.TimeAgo = timeAgo
 	}
 }
 
