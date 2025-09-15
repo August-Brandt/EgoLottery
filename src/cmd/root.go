@@ -40,7 +40,7 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().StringVar(&cfgFile, "config", "", "Path to config file for EgoLottery. Default is ~/.config/egolottery/config.yaml")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "Path to config file for EgoLottery. Default is ~/.config/egolottery/config.yaml")
 }
 
 func initConfig() {
@@ -56,7 +56,7 @@ func initConfig() {
 	}
 	err = fig.Load(Cfg, fig.File(path.Base(cfgFile)), fig.Dirs(path.Dir(cfgFile)))
 	if err != nil && strings.Contains(err.Error(), "file not found") {
-		fmt.Printf("Unable to locate config file at %s\n", cfgFile)
+		fmt.Printf("Unable to locate config file at '%s'\n", cfgFile)
 		if cfgFile == path.Join(configDir, "egolottery", "config.yaml") {
 			stdinReader := bufio.NewReader(os.Stdin)
 			fmt.Print("\nNo config was found at default location. Would you like to create one?[y|n] ")
