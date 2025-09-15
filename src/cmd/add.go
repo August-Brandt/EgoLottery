@@ -23,11 +23,12 @@ var addCmd = &cobra.Command{
 			cmd.Help()
 			os.Exit(1)
 		}
+
 		absPaths := getAbsolutePaths(args)
 		for _, path := range absPaths {
 			Cfg.Directories = append(Cfg.Directories, path)
 		}
-		// fmt.Println("Adding ", strings.Join(absPaths, ", "), "to config")
+
 		err := overwriteConfig()
 		if err != nil {
 			panic(err)
