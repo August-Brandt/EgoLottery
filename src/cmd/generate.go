@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 
@@ -74,13 +75,19 @@ func initGenerateConfig() {
 		}
 	}
 	if len(flagDirectories) != 0 {
+		absPaths := []string{}
 		for _, dir := range flagDirectories {
 			if _, err := os.Stat(dir); errors.Is(err, os.ErrNotExist) {
 				fmt.Printf("The path '%s' does not exist on the system. Please only include valid paths\n", dir)
 				os.Exit(1)
 			}
+			absPath, err := filepath.Abs(dir)
+			if err != nil {
+				panic(err)
+			}
+			absPaths = append(absPaths, absPath)
 		}
-		Cfg.Directories = flagDirectories
+		Cfg.Directories = absPaths
 	}
 	if timeAgo != -1 {
 		if timeAgo > 0 {
