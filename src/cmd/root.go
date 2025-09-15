@@ -24,6 +24,9 @@ var rootCmd = &cobra.Command{
 	Short: "EgoLottery is a local git repository visualizer",
 	Long: `This is the long 
 discription of EgoLottery`,
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		initConfig()
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},
@@ -37,7 +40,6 @@ func Execute() {
 }
 
 func init() {
-	initConfig()
 	rootCmd.Flags().StringVar(&cfgFile, "config", "", "Path to config file for EgoLottery. Default is ~/.config/egolottery/config.yaml")
 }
 
