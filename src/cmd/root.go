@@ -11,6 +11,7 @@ import (
 	"github.com/August-Brandt/EgoLottery/config"
 	"github.com/kkyr/fig"
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v3"
 )
 
 // Flag vars
@@ -90,16 +91,6 @@ func initConfig() {
 }
 
 func createConfig(stdinReader *bufio.Reader, path string) {
-	defaultConfig := `group: "days"
-timeago: 60
-searchdepth: 0
-
-emails:
-  - "<email>"
-
-directories:
-  - "<working dir>"
-`
 	fmt.Print("Please enter git email: ")
 	email, err := stdinReader.ReadString('\n')
 	if err != nil {
@@ -107,21 +98,44 @@ directories:
 	}
 	email = strings.TrimSpace(email)
 
-	defaultConfig = strings.Replace(defaultConfig, "<email>", email, 1)
-
 	fmt.Print("Please enter the path to a git repo: ")
-	dir, err := stdinReader.ReadString('\n')
-	dir = strings.TrimSpace(dir)
-	dir, err = filepath.Abs(dir)
+	invalidPath := true
+	var dir string
+	for i := 0; i < 3; i++ {
+		dir, err = stdinReader.ReadString('\n')
+		dir = strings.TrimSpace(dir)
+		dir, err = filepath.Abs(dir)
+		if err != nil {
+			fmt.Printf("Invalid path. Error: %s\n", err.Error())
+		} else {
+			invalidPath = false
+			break
+		}
+		fmt.Print("Please enter the path to a git repo: ")
+	}
+	if invalidPath {
+		fmt.Println("No valid paths where give")
+		os.Exit(1)
+	}
+
+	newCfg := &config.Config{
+		GroupType: "days",
+		TimeAgo: 60,
+		SearchDepth: 0,
+		Emails: []string{email},
+		Directories: []string{dir},
+	}
+
+	newYaml, err := yaml.Marshal(newCfg)
 	if err != nil {
 		panic(err)
 	}
-	defaultConfig = strings.Replace(defaultConfig, "<working dir>", dir, 1)
 
-	err = os.WriteFile(path, []byte(defaultConfig), 0644)
+	err = os.WriteFile(path, newYaml, 0644)
 	if err != nil {
 		panic(err)
 	}
 
 	fmt.Printf("Config created at %s\n", path)
+	os.Exit(0)
 }
