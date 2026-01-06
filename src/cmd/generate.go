@@ -26,6 +26,8 @@ var generateCmd = &cobra.Command{
 	Short: "Pull data from git repositories and generate visualization",
 	Long:  "Pull git commit data from the specified directories and generate and output a graphical visualization",
 	Run: func(cmd *cobra.Command, args []string) {
+		initGenerateConfig()
+
 		if outputFile != "" {
 			_, err := os.Create(outputFile)
 			if err != nil {
@@ -47,9 +49,7 @@ var generateCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(generateCmd)
-
-	cobra.OnInitialize(initGenerateConfig)
-
+	
 	generateCmd.Flags().StringVarP(&commitGrouping, "group", "g", "", "Grouping commits by [days|weeks]")
 	generateCmd.Flags().IntVar(&searchDepth, "depth", -1, "The depth to recursively search for .git directories")
 	generateCmd.Flags().StringSliceVar(&flagDirectories, "dirs", []string{}, "Comma separated list of directories in which to look for git repositories. Replaces directories in config")
@@ -67,7 +67,7 @@ func initGenerateConfig() {
 		}
 	}
 	if searchDepth != -1 {
-		if searchDepth > 0 {
+		if searchDepth >= 0 {
 			Cfg.SearchDepth = searchDepth
 		} else {
 			fmt.Printf("'%d' is an invalid depth value. Values must be positive\n", searchDepth)
