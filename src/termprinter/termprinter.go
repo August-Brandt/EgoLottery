@@ -72,13 +72,14 @@ func createChart(maxtime, maxval, width int, commits map[int]int) []*streamlinec
 	sizeOfYLabels := len(fmt.Sprintf("%d", maxval)) + 1
 	fullChartXDim := maxtime + sizeOfYLabels
 	chartYDim := maxval
+	YRange := streamlinechart.WithYRange(0.0, float64(maxval))
 	
 	numOfCharts := fullChartXDim / width
 	commitsPrChart := width - sizeOfYLabels
-
+	
 	charts := make([]*streamlinechart.Model, numOfCharts+1)
 	for i := 0; i < numOfCharts; i++ { // Create all full sized charts
-		chart := streamlinechart.New(width, chartYDim)
+		chart := streamlinechart.New(width, chartYDim, YRange)
 		for j := i * commitsPrChart; j < (i+1)*commitsPrChart; j++ {
 			commit, exists := commits[j]
 			if !exists {
@@ -90,10 +91,11 @@ func createChart(maxtime, maxval, width int, commits map[int]int) []*streamlinec
 		chart.Draw()
 		charts[i] = &chart
 	}
+	
 	// Add chart with remainder
 	if remainder := fullChartXDim % width; remainder != 0 {
 		fullChartXDim = remainder + sizeOfYLabels
-		chart := streamlinechart.New(fullChartXDim, chartYDim)
+		chart := streamlinechart.New(fullChartXDim, chartYDim, YRange)
 		for i := numOfCharts * commitsPrChart; i <= maxtime; i++ {
 			commit, exists := commits[i]
 			if !exists {
