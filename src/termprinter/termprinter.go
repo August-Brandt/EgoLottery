@@ -24,18 +24,8 @@ func PrintGraph(repos []*gitstats.Repo, config *config.Config, output string) er
 		fmt.Println(charts[0].View())
 		return nil
 	}
-
-	// Find max number of commits
-	max := -1
-	max_time := -1
-	for time, numCommits := range commitGroups {
-		if time > max_time {
-			max_time = time
-		}
-		if numCommits > max {
-			max = numCommits
-		}
-	}
+	
+	max := getMaxNumberOfCommits(commitGroups)
 
 	width, _, err := term.GetSize(0)
 	if err != nil {
@@ -68,6 +58,20 @@ func PrintGraph(repos []*gitstats.Repo, config *config.Config, output string) er
 	return nil
 }
 
+func getMaxNumberOfCommits(commits map[int]int) int {
+	max := -1
+	max_time := -1
+	for time, numCommits := range commits {
+		if time > max_time {
+			max_time = time
+		}
+		if numCommits > max {
+			max = numCommits
+		}
+	}
+	return max
+}
+
 func createChart(maxtime, maxval, width int, commits map[int]int) []*streamlinechart.Model {
 	sizeOfYLabels := len(fmt.Sprintf("%d", maxval)) + 1
 	fullChartXDim := maxtime + sizeOfYLabels
@@ -91,7 +95,7 @@ func createChart(maxtime, maxval, width int, commits map[int]int) []*streamlinec
 		chart.Draw()
 		charts[i] = &chart
 	}
-	
+
 	// Add chart with remainder
 	if remainder := fullChartXDim % width; remainder != 0 {
 		fullChartXDim = remainder + sizeOfYLabels
