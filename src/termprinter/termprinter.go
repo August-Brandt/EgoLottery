@@ -72,7 +72,6 @@ func createChart(maxtime, maxval, width int, commits map[int]int) []*streamlinec
 	sizeOfYLabels := len(fmt.Sprintf("%d", maxval)) + 1
 	fullChartXDim := maxtime + sizeOfYLabels
 	chartYDim := maxval
-	fmt.Printf("ChartXDim: %d | width: %d\n", fullChartXDim, width)
 	
 	numOfCharts := fullChartXDim / width
 	commitsPrChart := width - sizeOfYLabels
@@ -92,7 +91,6 @@ func createChart(maxtime, maxval, width int, commits map[int]int) []*streamlinec
 		charts[i] = &chart
 	}
 	// Add chart with remainder
-	fmt.Printf("ChartXDim: %d | width: %d | remainder: %d\n", fullChartXDim, width, fullChartXDim % width)
 	if remainder := fullChartXDim % width; remainder != 0 {
 		fullChartXDim = remainder + sizeOfYLabels
 		chart := streamlinechart.New(fullChartXDim, chartYDim)
@@ -108,17 +106,5 @@ func createChart(maxtime, maxval, width int, commits map[int]int) []*streamlinec
 		charts[numOfCharts] = &chart
 	}
 	fmt.Println(charts)
-
-	// slc := streamlinechart.New(chartXDim, chartYDim) // Set dimensions for linechart
-	// for i := 0; i <= maxtime; i++ {
-	// 	commits, err  := commits[i]
-	// 	if !err {
-	// 		slc.Push(0)
-	// 	} else {
-	// 		slc.Push(float64(commits))
-	// 	}
-	// }
-	// slc.Draw()
-
 	return charts
 }
